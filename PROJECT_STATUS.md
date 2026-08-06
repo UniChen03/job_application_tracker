@@ -11,3 +11,4 @@
 - Passed sample application data from Flask to a Jinja loop.
 - Initialized a local Git repository and created the first commit.
 - Pushed the project to a private Github repository.
+- Displayed application data in an HTML table.
