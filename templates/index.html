@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ page_title }}</title>
+</head>
+<body>
+    <h1>{{ page_title }}</h1>
+    <ul>
+        {% for application in applications %}
+            <li>
+                {{ application.company }} -
+                {{ application.position }} -
+                {{ application.wage }} -
+                {{ application.status }}
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
