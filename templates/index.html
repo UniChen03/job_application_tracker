@@ -10,6 +10,49 @@
 </head>
 <body>
     <h1>{{ page_title }}</h1>
+    <h2>Add New Application</h2>
+
+    <form action="{{ url_for('add_application') }}" method="post">
+        <label for="company">Company</label>
+        <input
+            type="text"
+            id="company"
+            name="company"
+            maxlength="127"
+            required
+        >
+
+        <label for="position">Position</label>
+        <input
+            type="text"
+            id="position"
+            name="position"
+            maxlength="63"
+            required
+        >
+
+        <label for="wage">Wage</label>
+        <input
+            type="number"
+            id="wage"
+            name="wage"
+            min="0"
+            step="0.01"
+        >
+
+        <label for="status">Status</label>
+        <select id="status" name="status" required>
+            <option value="Applied">Applied</option>
+            <option value="Waiting for Interview">Waiting for Interview</option>
+            <option value="Interviewed">Interviewed</option>
+            <option value="Offer">Offer</option>
+            <option value="Rejected">Rejected</option>
+            <option value="Withdrawn">Withdrawn</option>
+        </select>
+
+        <button type="submit">Add Application</button>
+    </form>
+
     <table>
         <thead>
             <tr>

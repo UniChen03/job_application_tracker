@@ -15,3 +15,4 @@
 - Added a CSS stylesheet and styled the application table.
 - Designed the SQLite schema and initialized the applications database.
 - Replaced hardcoded application data with rows loaded from SQLite.
+- Added applications through a browser form and saved them to SQLite.
