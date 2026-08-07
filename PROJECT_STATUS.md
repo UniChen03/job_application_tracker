@@ -17,3 +17,4 @@
 - Replaced hardcoded application data with rows loaded from SQLite.
 - Added applications through a browser form and saved them to SQLite.
 - Added server-side validation for application form submissions.
+- Formatted wages and displayed a message when wage was not provided.
