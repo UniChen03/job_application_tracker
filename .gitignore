@@ -13,3 +13,6 @@ instance/
 .vscode/
 .DS_Store
 Thumbs.db
+
+# Agents Prompts
+AGENTS.md
