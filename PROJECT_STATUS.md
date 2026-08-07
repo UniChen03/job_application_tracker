@@ -20,3 +20,4 @@
 - Formatted wages and displayed a message when wage was not provided.
 - Added a friendly message when no applications exist.
 - Added the ability to delete individual applications.
+- Added the ability to edit existing applications.

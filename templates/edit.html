@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Application</title>
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+</head>
+<body>
+    <h1>Edit Application</h1>
+
+    <form
+        action="{{ url_for('edit_application', application_id=application.id) }}"
+        method="post"
+    >
+        <label for="company">Company</label>
+        <input
+            type="text"
+            id="company"
+            name="company"
+            value="{{ application.company }}"
+            maxlength="127"
+            required
+        >
+
+        <label for="position">Position</label>
+        <input
+            type="text"
+            id="position"
+            name="position"
+            value="{{ application.position }}"
+            maxlength="63"
+            required
+        >
+
+        <label for="wage">Wage</label>
+        <input
+            type="number"
+            id="wage"
+            name="wage"
+            value="{% if application.wage is not none %}{{ application.wage }}{% endif %}"
+            min="0"
+            step="0.01"
+        >
+
+        <label for="status">Status</label>
+        <select id="status" name="status" required>
+            <option
+                value="Applied"
+                {% if application.status == "Applied" %}selected{% endif %}
+            >
+                Applied
+            </option>
+
+            <option
+                value="Waiting for Interview"
+                {% if application.status == "Waiting for Interview" %}selected{% endif %}
+            >
+                Waiting for Interview
+            </option>
+
+            <option
+                value="Interviewed"
+                {% if application.status == "Interviewed" %}selected{% endif %}
+            >
+                Interviewed
+            </option>
+
+            <option
+                value="Offer"
+                {% if application.status == "Offer" %}selected{% endif %}
+            >
+                Offer
+            </option>
+
+            <option
+                value="Rejected"
+                {% if application.status == "Rejected" %}selected{% endif %}
+            >
+                Rejected
+            </option>
+
+            <option
+                value="Withdrawn"
+                {% if application.status == "Withdrawn" %}selected{% endif %}
+            >
+                Withdrawn
+            </option>
+        </select>
+
+        <button type="submit">Save Changes</button>
+    </form>
+
+    <a href="{{ url_for('index') }}">Back to Applications</a>
+</body>
+</html>
