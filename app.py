@@ -85,22 +85,42 @@ def add_application():
     return redirect(url_for("index"))
 
 
-@app.route("/applications/<int:application_id>/delete", methods=["POST"])
+@app.route("/applications/<int:application_id>/delete", methods=["GET", "POST"])
 def delete_application(application_id):
     connection = get_db_connection()
 
-    connection.execute(
+    application = connection.execute(
         """
-        DELETE FROM applications
+        SELECT id, company, position
+        FROM applications
         WHERE id = ?
         """,
         (application_id,),
-    )
-    connection.commit()
+    ).fetchone()
+
     connection.close()
 
-    return redirect(url_for("index"))
+    if application is None:
+        return "Application not found.", 404
 
+    if request.method == "POST":
+        connection = get_db_connection()
+        connection.execute(
+            """
+            DELETE FROM applications
+            WHERE id = ?
+            """,
+            (application_id,),
+        )
+        connection.commit()
+        connection.close()
+
+        return redirect(url_for("index"))
+
+    return render_template(
+        "delete.html",
+        application=application,
+    )
 
 
 @app.route("/applications/<int:application_id>/edit", methods=["GET", "POST"])
