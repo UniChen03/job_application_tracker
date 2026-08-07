@@ -69,7 +69,15 @@
                 <tr>
                     <td>{{ application.company }}</td>
                     <td>{{ application.position }}</td>
-                    <td>{{ application.wage }}</td>
+
+                    <td>
+                        {% if application.wage is not none %}
+                            ${{ "%.2f" | format(application.wage) }}
+                        {% else %}
+                            Not provided
+                        {% endif %}
+                    </td>
+
                     <td>{{ application.status }}</td>
                 </tr>
             {% endfor %}
