@@ -80,6 +80,12 @@
 
                     <td>{{ application.status }}</td>
                 </tr>
+            {% else %}
+                <tr>
+                    <td colspan="4">
+                        No applications yet. Add one using the form above.
+                    </td>
+                </tr>
             {% endfor %}
         </tbody>
     </table>

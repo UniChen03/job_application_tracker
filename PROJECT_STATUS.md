@@ -18,3 +18,4 @@
 - Added applications through a browser form and saved them to SQLite.
 - Added server-side validation for application form submissions.
 - Formatted wages and displayed a message when wage was not provided.
+- Added a friendly message when no applications exist.
