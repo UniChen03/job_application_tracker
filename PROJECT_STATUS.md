@@ -21,3 +21,4 @@
 - Added a friendly message when no applications exist.
 - Added the ability to delete individual applications.
 - Added the ability to edit existing applications.
+- Added a confirmation page before deleting an application.
