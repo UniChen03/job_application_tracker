@@ -83,3 +83,20 @@ def add_application():
     connection.close()
 
     return redirect(url_for("index"))
+
+
+@app.route("/applications/<int:application_id>/delete", methods=["POST"])
+def delete_application(application_id):
+    connection = get_db_connection()
+
+    connection.execute(
+        """
+        DELETE FROM applications
+        WHERE id = ?
+        """,
+        (application_id,),
+    )
+    connection.commit()
+    connection.close()
+
+    return redirect(url_for("index"))

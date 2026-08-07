@@ -10,84 +10,98 @@
 </head>
 <body>
     <h1>{{ page_title }}</h1>
-    <h2>Add New Application</h2>
+    <div>
+        <h2>Add New Application</h2>
 
-    <form action="{{ url_for('add_application') }}" method="post">
-        <label for="company">Company</label>
-        <input
-            type="text"
-            id="company"
-            name="company"
-            maxlength="127"
-            required
-        >
+        <form action="{{ url_for('add_application') }}" method="post">
+            <label for="company">Company</label>
+            <input
+                type="text"
+                id="company"
+                name="company"
+                maxlength="127"
+                required
+            >
 
-        <label for="position">Position</label>
-        <input
-            type="text"
-            id="position"
-            name="position"
-            maxlength="63"
-            required
-        >
+            <label for="position">Position</label>
+            <input
+                type="text"
+                id="position"
+                name="position"
+                maxlength="63"
+                required
+            >
 
-        <label for="wage">Wage</label>
-        <input
-            type="number"
-            id="wage"
-            name="wage"
-            min="0"
-            step="0.01"
-        >
+            <label for="wage">Wage</label>
+            <input
+                type="number"
+                id="wage"
+                name="wage"
+                min="0"
+                step="0.01"
+            >
 
-        <label for="status">Status</label>
-        <select id="status" name="status" required>
-            <option value="Applied">Applied</option>
-            <option value="Waiting for Interview">Waiting for Interview</option>
-            <option value="Interviewed">Interviewed</option>
-            <option value="Offer">Offer</option>
-            <option value="Rejected">Rejected</option>
-            <option value="Withdrawn">Withdrawn</option>
-        </select>
+            <label for="status">Status</label>
+            <select id="status" name="status" required>
+                <option value="Applied">Applied</option>
+                <option value="Waiting for Interview">Waiting for Interview</option>
+                <option value="Interviewed">Interviewed</option>
+                <option value="Offer">Offer</option>
+                <option value="Rejected">Rejected</option>
+                <option value="Withdrawn">Withdrawn</option>
+            </select>
 
-        <button type="submit">Add Application</button>
-    </form>
+            <button type="submit">Add Application</button>
+        </form>
+    </div>
 
-    <h2>Existing Applications</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Company</th>
-                <th>Position</th>
-                <th>Wage</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-
-        <tbody>
-            {% for application in applications %}
+    <div>
+        <h2>Existing Applications</h2>
+        <table>
+            <thead>
                 <tr>
-                    <td>{{ application.company }}</td>
-                    <td>{{ application.position }}</td>
-
-                    <td>
-                        {% if application.wage is not none %}
-                            ${{ "%.2f" | format(application.wage) }}
-                        {% else %}
-                            Not provided
-                        {% endif %}
-                    </td>
-
-                    <td>{{ application.status }}</td>
+                    <th>Company</th>
+                    <th>Position</th>
+                    <th>Wage</th>
+                    <th>Status</th>
+                    <th>Actions</th>
                 </tr>
-            {% else %}
-                <tr>
-                    <td colspan="4">
-                        No applications yet. Add one using the form above.
-                    </td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+
+            <tbody>
+                {% for application in applications %}
+                    <tr>
+                        <td>{{ application.company }}</td>
+                        <td>{{ application.position }}</td>
+
+                        <td>
+                            {% if application.wage is not none %}
+                                ${{ "%.2f" | format(application.wage) }}
+                            {% else %}
+                                Not provided
+                            {% endif %}
+                        </td>
+
+                        <td>{{ application.status }}</td>
+
+                        <td>
+                            <form
+                                action="{{ url_for('delete_application', application_id=application.id) }}"
+                                method="post"
+                            >
+                                <button type="submit">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="5">
+                            No applications yet. Add one using the form above.
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </body>
 </html>
