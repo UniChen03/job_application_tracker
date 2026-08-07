@@ -89,10 +89,15 @@
                                 Edit
                             </a>
 
-                            <a
-                                href="{{ url_for('delete_application', application_id=application.id) }}">
+                            <button
+                                type="button"
+                                class="delete-button"
+                                data-delete-url="{{ url_for('delete_application', application_id=application.id) }}"
+                                data-company="{{ application.company }}"
+                                data-position="{{ application.position }}"
+                            >
                                 Delete
-                            </a>
+                            </button>
                         </td>
                     </tr>
                 {% else %}
@@ -104,6 +109,18 @@
                 {% endfor %}
             </tbody>
         </table>
+
+        <dialog id="delete-dialog">
+            <h2>Delete Application</h2>
+
+            <p id="delete-message"></p>
+
+            <form id="delete-form" method="post">
+                <button type="submit">Yes, Delete</button>
+                <button type="button" id="cancel-delete">Cancel</button>
+            </form>
+        </dialog>
     </div>
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
 </body>
 </html>
