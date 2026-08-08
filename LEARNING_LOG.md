@@ -16,3 +16,9 @@
 
 ## JavaScript
 -
+
+## Unittest
+- A unit test checks on small unit of code, such as a function or method.
+- An assertion compares the actual result with the expected result.
+- Test method names begin with `test_` so **unittest** can discover and run them automatically.
+- A subTest lets one test method check several similar cases.

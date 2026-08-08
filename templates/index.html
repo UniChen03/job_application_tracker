@@ -49,6 +49,7 @@
                 <option value="Offer">Offer</option>
                 <option value="Rejected">Rejected</option>
                 <option value="Withdrawn">Withdrawn</option>
+                <option value="Other">Other</option>
             </select>
 
             <button type="submit">Add Application</button>
@@ -178,6 +179,13 @@
                                     {% if application.status == "Withdrawn" %}selected{% endif %}
                                 >
                                     Withdrawn
+                                </option>
+
+                                <option
+                                    value="Other"
+                                    {% if application.status == "Other" %}selected{% endif %}
+                                >
+                                    Other
                                 </option>
                             </select>
                         </td>

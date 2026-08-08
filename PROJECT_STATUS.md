@@ -24,3 +24,6 @@
 - Added a confirmation page before deleting an application.
 - Added a floating delete confirmation dialog with vanilla JavaScript.
 - Added inline editing for application rows with vanilla JavaScript.
+- Refactored Create and Update to share one validation function.
+- Added automated unit tests for application form validation using Python unittest.
+- Added Other as a valid status in the create form, edit form, Python validation, and SQLite schema.

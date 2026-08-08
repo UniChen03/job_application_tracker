@@ -12,6 +12,7 @@ ALLOWED_STATUSES = {
     "Offer",
     "Rejected",
     "Withdrawn",
+    "Other",
 }
 
 
@@ -19,6 +20,35 @@ def get_db_connection():
     connection = sqlite3.connect(database_path)
     connection.row_factory = sqlite3.Row
     return connection
+
+
+def validate_application_form(form):
+    company = form.get("company", "").strip()
+    position = form.get("position", "").strip()
+    wage_text = form.get("wage", "").strip()
+    status = form.get("status", "").strip()
+
+    if not company or not position or not status:
+        return None, "Company, position, and status are required."
+
+    if len(company) > 127:
+        return None, "Company must be 127 characters or fewer."
+
+    if len(position) > 63:
+        return None, "Position must be 63 characters or fewer."
+
+    if status not in ALLOWED_STATUSES:
+        return None, "Invalid application status."
+
+    try:
+        wage = float(wage_text) if wage_text else None
+    except ValueError:
+        return None, "Wage must be a number."
+
+    if wage is not None and wage < 0:
+        return None, "Wage cannot be negative."
+
+    return (company, position, wage, status), None
 
 
 @app.route("/")
@@ -45,30 +75,12 @@ def index():
 
 @app.route("/applications", methods=["POST"])
 def add_application():
-    company = request.form.get("company", "").strip()
-    position = request.form.get("position", "").strip()
-    wage_text = request.form.get("wage", "").strip()
-    status = request.form.get("status", "").strip()
+    form_data, err_msg = validate_application_form(request.form)
 
-    if not company or not position or not status:
-        return "Company, position, and status are required.", 400
+    if err_msg is not None:
+        return err_msg, 400
 
-    if len(company) > 127:
-        return "Company must be 127 characters or fewer.", 400
-
-    if len(position) > 63:
-        return "Position must be 63 characters or fewer.", 400
-
-    if status not in ALLOWED_STATUSES:
-        return "Invalid application status.", 400
-
-    try:
-        wage = float(wage_text) if wage_text else None
-    except ValueError:
-        return "Wage must be a number.", 400
-
-    if wage is not None and wage < 0:
-        return "Wage cannot be negative.", 400
+    company, position, wage, status = form_data
 
     connection = get_db_connection()
     connection.execute(
@@ -142,31 +154,13 @@ def edit_application(application_id):
         return "Application not found.", 404
 
     if request.method == "POST":
-        company = request.form.get("company", "").strip()
-        position = request.form.get("position", "").strip()
-        wage_text = request.form.get("wage", "").strip()
-        status = request.form.get("status", "").strip()
-    
-        if not company or not position or not status:
-            return "Company, position, and status are required.", 400
-    
-        if len(company) > 127:
-            return "Company must be 127 characters or fewer.", 400
-    
-        if len(position) > 63:
-            return "Position must be 63 characters or fewer.", 400
-    
-        if status not in ALLOWED_STATUSES:
-            return "Invalid application status.", 400
-    
-        try:
-            wage = float(wage_text) if wage_text else None
-        except ValueError:
-            return "Wage must be a number.", 400
-    
-        if wage is not None and wage < 0:
-            return "Wage cannot be negative.", 400
-    
+        form_data, err_msg = validate_application_form(request.form)
+
+        if err_msg is not None:
+            return err_msg, 400
+
+        company, position, wage, status = form_data
+
         connection = get_db_connection()
         connection.execute(
             """
@@ -178,7 +172,7 @@ def edit_application(application_id):
         )
         connection.commit()
         connection.close()
-        
+
         return redirect(url_for("index"))
 
     return render_template(

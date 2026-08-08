@@ -11,7 +11,8 @@ CREATE TABLE IF NOT EXISTS applications (
                 'Interviewed',
                 'Offer',
                 'Rejected',
-                'Withdrawn'
+                'Withdrawn',
+                'Other'
             )
         )
 );
