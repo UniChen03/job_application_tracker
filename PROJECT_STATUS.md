@@ -23,3 +23,4 @@
 - Added the ability to edit existing applications.
 - Added a confirmation page before deleting an application.
 - Added a floating delete confirmation dialog with vanilla JavaScript.
+- Added inline editing for application rows with vanilla JavaScript.
