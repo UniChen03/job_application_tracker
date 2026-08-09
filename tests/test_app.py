@@ -10,8 +10,8 @@ class ValidateApplicationFormTests(unittest.TestCase):
         for field in required_fields:
             with self.subTest(field=field):
                 data = {
-                    "company": "Example Company",
-                    "position": "Developer",
+                    "company": "test_comp",
+                    "position": "test_posi",
                     "wage": "25",
                     "status": "Applied",
                 }
@@ -29,8 +29,8 @@ class ValidateApplicationFormTests(unittest.TestCase):
     def test_negative_wage_is_rejected(self):
         form_data, err_msg = validate_application_form(
             {
-                "company": "Example Company",
-                "position": "Developer",
+                "company": "test_comp",
+                "position": "test_posi",
                 "wage": "-2",
                 "status": "Applied",
             }
@@ -46,7 +46,7 @@ class ValidateApplicationFormTests(unittest.TestCase):
         form_data, err_msg = validate_application_form(
             {
                 "company": "C" * 128,
-                "position": "Developer",
+                "position": "test_posi",
                 "wage": "25",
                 "status": "Applied",
             }
@@ -61,7 +61,7 @@ class ValidateApplicationFormTests(unittest.TestCase):
     def test_too_long_position_is_rejected(self):
         form_data, err_msg = validate_application_form(
             {
-                "company": "Example Company",
+                "company": "test_comp",
                 "position": "P" * 64,
                 "wage": "25",
                 "status": "Applied",
@@ -77,8 +77,8 @@ class ValidateApplicationFormTests(unittest.TestCase):
     def test_invalid_status_is_rejected(self):
         form_data, err_msg = validate_application_form(
             {
-                "company": "Example Company",
-                "position": "Developer",
+                "company": "test_comp",
+                "position": "test_posi",
                 "wage": "25",
                 "status": "Unknown",
             }
@@ -93,8 +93,8 @@ class ValidateApplicationFormTests(unittest.TestCase):
     def test_non_numeric_wage_is_rejected(self):
         form_data, err_msg = validate_application_form(
             {
-                "company": "Example Company",
-                "position": "Developer",
+                "company": "test_comp",
+                "position": "test_posi",
                 "wage": "twenty-five",
                 "status": "Applied",
             }
@@ -109,8 +109,8 @@ class ValidateApplicationFormTests(unittest.TestCase):
     def test_valid_data_is_accepted(self):
         form_data, err_msg = validate_application_form(
             {
-                "company": "Example Company",
-                "position": "Developer",
+                "company": "test_comp",
+                "position": "test_posi",
                 "wage": "25",
                 "status": "Applied",
             }
@@ -118,15 +118,15 @@ class ValidateApplicationFormTests(unittest.TestCase):
 
         self.assertEqual(
             form_data,
-            ("Example Company", "Developer", 25.0, "Applied"),
+            ("test_comp", "test_posi", 25.0, "Applied"),
         )
         self.assertIsNone(err_msg)
 
     def test_empty_wage_is_accepted(self):
         form_data, err_msg = validate_application_form(
             {
-                "company": "Example Company",
-                "position": "Developer",
+                "company": "test_comp",
+                "position": "test_posi",
                 "wage": "",
                 "status": "Applied",
             }
@@ -134,7 +134,7 @@ class ValidateApplicationFormTests(unittest.TestCase):
 
         self.assertEqual(
             form_data,
-            ("Example Company", "Developer", None, "Applied"),
+            ("test_comp", "test_posi", None, "Applied"),
         )
         self.assertIsNone(err_msg)
 

@@ -63,7 +63,6 @@ def index():
         ORDER BY id DESC
         """
     ).fetchall()
-
     connection.close()
 
     return render_template(
@@ -90,7 +89,6 @@ def add_application():
         """,
         (company, position, wage, status),
     )
-
     connection.commit()
     connection.close()
 
@@ -109,7 +107,6 @@ def delete_application(application_id):
         """,
         (application_id,),
     ).fetchone()
-
     connection.close()
 
     if application is None:
@@ -147,7 +144,6 @@ def edit_application(application_id):
         """,
         (application_id,),
     ).fetchone()
-
     connection.close()
 
     if application is None:

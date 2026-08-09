@@ -27,3 +27,4 @@
 - Refactored Create and Update to share one validation function.
 - Added automated unit tests for application form validation using Python unittest.
 - Added Other as a valid status in the create form, edit form, Python validation, and SQLite schema.
+- Added Flask route integration tests for CRUD success and error paths using a temporary SQLite database.
