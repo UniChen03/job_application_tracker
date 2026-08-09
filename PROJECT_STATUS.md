@@ -28,3 +28,4 @@
 - Added automated unit tests for application form validation using Python unittest.
 - Added Other as a valid status in the create form, edit form, Python validation, and SQLite schema.
 - Added Flask route integration tests for CRUD success and error paths using a temporary SQLite database.
+- Added status filtering with GET query parameters, server-side validation, and filtered empty-state messaging.

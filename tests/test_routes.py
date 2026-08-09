@@ -212,6 +212,66 @@ class ApplicationRouteTests(unittest.TestCase):
             response.get_data(as_text=True),
         )
 
+    def test_index_filters_applications_by_status(self):
+        connection = sqlite3.connect(self.test_database_path)
+        connection.executemany(
+            """
+            INSERT INTO applications (company, position, wage, status)
+            VALUES (?, ?, ?, ?)
+            """,
+            [
+                ("test_applied_comp", "test_posi", 25.00, "Applied"),
+                ("test_rejected_comp", "test_posi", 30.00, "Rejected"),
+            ],
+        )
+        connection.commit()
+        connection.close()
+
+        response = self.client.get("/?status=Applied")
+
+        self.assertEqual(response.status_code, 200)
+
+        page_html = response.get_data(as_text=True)
+
+        self.assertIn("test_applied_comp", page_html)
+        self.assertNotIn("test_rejected_comp", page_html)
+
+    def test_index_displays_no_filter_matches_message(self):
+        connection = sqlite3.connect(self.test_database_path)
+        connection.execute(
+            """
+            INSERT INTO applications (company, position, wage, status)
+            VALUES (?, ?, ?, ?)
+            """,
+            ("test_applied_comp", "test_posi", 25.00, "Applied"),
+        )
+        connection.commit()
+        connection.close()
+
+        response = self.client.get("/?status=Rejected")
+
+        self.assertEqual(response.status_code, 200)
+
+        page_html = response.get_data(as_text=True)
+
+        self.assertIn(
+            "No applications match the Rejected status.",
+            page_html,
+        )
+        self.assertNotIn(
+            "No applications yet. Add one using the form above.",
+            page_html,
+        )
+
+    def test_index_rejects_invalid_status_filter(self):
+        response = self.client.get("/?status=invalid_status")
+
+        self.assertEqual(response.status_code, 400)
+        self.assertIn(
+            "Invalid application status.",
+            response.get_data(as_text=True),
+        )
+
     def tearDown(self):
         app_module.database_path = self.original_database_path
         app_module.app.config["TESTING"] = self.original_testing

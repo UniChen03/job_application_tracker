@@ -54,21 +54,40 @@ def validate_application_form(form):
 @app.route("/")
 def index():
     page_title = "Job Application Tracker"
+    selected_status = request.args.get("status", "").strip()
+
+    if selected_status and selected_status not in ALLOWED_STATUSES:
+        return "Invalid application status.", 400
 
     connection = get_db_connection()
-    applications = connection.execute(
-        """
-        SELECT id, company, position, wage, status
-        FROM applications
-        ORDER BY id DESC
-        """
-    ).fetchall()
+
+    if selected_status:
+        applications = connection.execute(
+            """
+            SELECT id, company, position, wage, status
+            FROM applications
+            WHERE status = ?
+            ORDER BY id DESC
+            """,
+            (selected_status,),
+        ).fetchall()
+
+    else:
+        applications = connection.execute(
+            """
+            SELECT id, company, position, wage, status
+            FROM applications
+            ORDER BY id DESC
+            """
+        ).fetchall()
     connection.close()
 
     return render_template(
         "index.html",
         page_title=page_title,
         applications=applications,
+        selected_status=selected_status,
+        status_options=sorted(ALLOWED_STATUSES),
     )
 
 

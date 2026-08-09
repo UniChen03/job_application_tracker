@@ -58,6 +58,27 @@
 
     <div>
         <h2>Existing Applications</h2>
+
+        <form action="{{ url_for('index') }}" method="get">
+            <label for="status-filter">Filter by status</label>
+
+            <select id="status-filter" name="status">
+                <option value="">All statuses</option>
+
+                {% for status in status_options %}
+                    <option
+                        value="{{ status }}"
+                        {% if status == selected_status %}selected{% endif %}
+                    >
+                        {{ status }}
+                    </option>
+                {% endfor %}
+            </select>
+
+            <button type="submit">Filter</button>
+            <a href="{{ url_for('index') }}">Clear</a>
+        </form>
+
         <table>
             <thead>
                 <tr>
@@ -226,7 +247,11 @@
                 {% else %}
                     <tr>
                         <td colspan="5">
-                            No applications yet. Add one using the form above.
+                            {% if selected_status %}
+                                No applications match the {{ selected_status }} status.
+                            {% else %}
+                                No applications yet. Add one using the form above.
+                            {% endif %}
                         </td>
                     </tr>
                 {% endfor %}
