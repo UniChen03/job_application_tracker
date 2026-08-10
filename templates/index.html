@@ -84,6 +84,38 @@
                 value="{{ search_keyword }}"
                 maxlength="127"
             >
+            <label for="sort-order">Sort by</label>
+
+            <select id="sort-order" name="sort">
+                <option
+                    value="newest"
+                    {% if selected_sort == "newest" %}selected{% endif %}
+                >
+                    Newest first
+                </option>
+
+                <option
+                    value="company"
+                    {% if selected_sort == "company" %}selected{% endif %}
+                >
+                    Company A–Z
+                </option>
+
+                <option
+                    value="position"
+                    {% if selected_sort == "position" %}selected{% endif %}
+                >
+                    Position A–Z
+                </option>
+
+                <option
+                    value="wage"
+                    {% if selected_sort == "wage" %}selected{% endif %}
+                >
+                    Wage highest first
+                </option>
+            </select>
+
             <button type="submit">Apply</button>
             <a href="{{ url_for('index') }}">Clear</a>
         </form>
@@ -161,7 +193,7 @@
                             <span class="display-value">
                                 {{ application.status }}
                             </span>
-                            
+
                             <select
                                 class="edit-control"
                                 name="status"
@@ -227,7 +259,7 @@
                             >
                                 Edit
                             </a>
-                            
+
                             <form
                                 id="edit-form-{{ application.id }}"
                                 class="inline-edit-form"

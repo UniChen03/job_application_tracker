@@ -31,3 +31,4 @@
 - Added status filtering with GET query parameters, server-side validation, and filtered empty-state messaging.
 - Added project documentation with features, setup, usage, and testing instructions.
 - Added case-insensitive search by company or position and combined it with status filtering.
+- Added application sorting by newest, company, position, and highest wage.

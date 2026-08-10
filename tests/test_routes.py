@@ -353,6 +353,50 @@ class ApplicationRouteTests(unittest.TestCase):
         self.assertNotIn("Rejected Python Company", page_html)
         self.assertNotIn("Applied Design Company", page_html)
 
+    def test_index_sorts_applications(self):
+        connection = sqlite3.connect(self.test_database_path)
+        connection.executemany(
+            """
+            INSERT INTO applications (company, position, wage, status)
+            VALUES (?, ?, ?, ?)
+            """,
+            [
+                ("Zulu Company", "Alpha Position", 20.0, "Applied"),
+                ("Alpha Company", "Zulu Position", 40.0, "Applied"),
+            ],
+        )
+        connection.commit()
+        connection.close()
+
+        sort_cases = [
+            ("newest", "Alpha Company", "Zulu Company"),
+            ("company", "Alpha Company", "Zulu Company"),
+            ("position", "Zulu Company", "Alpha Company"),
+            ("wage", "Alpha Company", "Zulu Company"),
+        ]
+
+        for sort_option, first_company, second_company in sort_cases:
+            with self.subTest(sort_option=sort_option):
+                response = self.client.get(f"/?sort={sort_option}")
+
+                self.assertEqual(response.status_code, 200)
+
+                page_html = response.get_data(as_text=True)
+
+                first_position = page_html.index(first_company)
+                second_position = page_html.index(second_company)
+
+                self.assertLess(first_position, second_position)
+
+    def test_index_rejects_invalid_sort_option(self):
+        response = self.client.get("/?sort=invalid_sort")
+
+        self.assertEqual(response.status_code, 400)
+        self.assertIn(
+            "Invalid sort option.",
+            response.get_data(as_text=True),
+        )
+
     def tearDown(self):
         app_module.database_path = self.original_database_path
         app_module.app.config["TESTING"] = self.original_testing

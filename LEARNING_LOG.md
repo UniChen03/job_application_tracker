@@ -16,6 +16,9 @@
 ## SQLite
 - SQL `LIKE` performs partial text matching, and `%` represents any sequence of characters.
 - Dynamic filters can build SQL conditions while keeping user values in separate parameters.
+- SQL `ORDER BY` sorts query results by one or more columns.
+- SQL placeholders protect data values, but they cannot replace SQL keywords or column names.
+- A whitelist can safely map user-selected options to trusted SQL sorting clauses.
 
 ## JavaScript
 -

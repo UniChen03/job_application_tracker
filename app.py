@@ -14,6 +14,12 @@ ALLOWED_STATUSES = {
     "Withdrawn",
     "Other",
 }
+SORT_OPTIONS = {
+    "newest": "id DESC",
+    "company": "company COLLATE NOCASE ASC",
+    "position": "position COLLATE NOCASE ASC",
+    "wage": "wage DESC",
+}
 
 
 def get_db_connection():
@@ -56,9 +62,13 @@ def index():
     page_title = "Job Application Tracker"
     selected_status = request.args.get("status", "").strip()
     search_keyword = request.args.get("search", "").strip()
+    selected_sort = (request.args.get("sort", "newest").strip() or "newest")
 
     if selected_status and selected_status not in ALLOWED_STATUSES:
         return "Invalid application status.", 400
+
+    if selected_sort not in SORT_OPTIONS:
+        return "Invalid sort option.", 400
 
     connection = get_db_connection()
 
@@ -84,7 +94,7 @@ def index():
     if conditions:
         query += " WHERE " + " AND ".join(conditions)
 
-    query += " ORDER BY id DESC"
+    query += f" ORDER BY {SORT_OPTIONS[selected_sort]}"
 
     applications = connection.execute(
         query,
@@ -99,6 +109,7 @@ def index():
         selected_status=selected_status,
         status_options=sorted(ALLOWED_STATUSES),
         search_keyword=search_keyword,
+        selected_sort=selected_sort,
     )
 
 
