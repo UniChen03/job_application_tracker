@@ -19,6 +19,11 @@
 - SQL `ORDER BY` sorts query results by one or more columns.
 - SQL placeholders protect data values, but they cannot replace SQL keywords or column names.
 - A whitelist can safely map user-selected options to trusted SQL sorting clauses.
+- SQL `COUNT(*)` counts rows, and `GROUP BY` creates groups that can be counted separately.
+
+## CSS
+- CSS Grid arranges elements into rows and columns.
+- `repeat(auto-fit, minmax(...))` creates responsive columns that adjust to the available width.
 
 ## JavaScript
 -

@@ -56,6 +56,22 @@
         </form>
     </div>
 
+    <section class="application-summary">
+        <h2>Application Summary</h2>
+
+        <p class="summary-total">
+            Total applications: {{ total_applications }}
+        </p>
+
+        <ul class="summary-list">
+            {% for status in status_options %}
+                <li class="summary-card">
+                    {{ status }}: {{ status_counts[status] }}
+                </li>
+            {% endfor %}
+        </ul>
+    </section>
+
     <div>
         <h2>Existing Applications</h2>
 
@@ -74,7 +90,7 @@
                     </option>
                 {% endfor %}
             </select>
-
+            <br>
             <label for="search-keyword">Search by company or position</label>
 
             <input
@@ -84,6 +100,7 @@
                 value="{{ search_keyword }}"
                 maxlength="127"
             >
+            <br>
             <label for="sort-order">Sort by</label>
 
             <select id="sort-order" name="sort">

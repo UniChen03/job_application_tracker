@@ -32,3 +32,4 @@
 - Added project documentation with features, setup, usage, and testing instructions.
 - Added case-insensitive search by company or position and combined it with status filtering.
 - Added application sorting by newest, company, position, and highest wage.
+- Added a styled application summary with total and per-status counts.

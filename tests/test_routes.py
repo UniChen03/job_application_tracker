@@ -397,6 +397,32 @@ class ApplicationRouteTests(unittest.TestCase):
             response.get_data(as_text=True),
         )
 
+    def test_index_displays_application_summary(self):
+        connection = sqlite3.connect(self.test_database_path)
+        connection.executemany(
+            """
+            INSERT INTO applications (company, position, wage, status)
+            VALUES (?, ?, ?, ?)
+            """,
+            [
+                ("Company One", "Developer", 20.0, "Applied"),
+                ("Company Two", "Designer", 30.0, "Applied"),
+                ("Company Three", "Accountant", 40.0, "Rejected"),
+            ],
+        )
+        connection.commit()
+        connection.close()
+
+        response = self.client.get("/")
+
+        self.assertEqual(response.status_code, 200)
+
+        page_html = response.get_data(as_text=True)
+
+        self.assertIn("Total applications: 3", page_html)
+        self.assertIn("Applied: 2", page_html)
+        self.assertIn("Rejected: 1", page_html)
+
     def tearDown(self):
         app_module.database_path = self.original_database_path
         app_module.app.config["TESTING"] = self.original_testing

@@ -30,3 +30,27 @@ dialog {
 dialog::backdrop {
     background-color: rgba(0, 0, 0, 0.5);
 }
+
+.application-summary {
+    margin: 32px 0;
+}
+
+.summary-total,
+.summary-card {
+    border: 1px solid #cccccc;
+    border-radius: 8px;
+    padding: 16px;
+    background-color: #f7f7f7;
+}
+
+.summary-total {
+    font-weight: bold;
+}
+
+.summary-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+    padding: 0;
+    list-style: none;
+}

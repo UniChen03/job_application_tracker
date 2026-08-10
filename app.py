@@ -100,6 +100,24 @@ def index():
         query,
         tuple(parameters),
     ).fetchall()
+
+    summary_rows = connection.execute(
+        """
+        SELECT status, COUNT(*) AS application_count
+        FROM applications
+        GROUP BY status
+        """
+    ).fetchall()
+
+    status_counts = {
+        status: 0
+        for status in ALLOWED_STATUSES
+    }
+
+    for row in summary_rows:
+        status_counts[row["status"]] = row["application_count"]
+
+    total_applications = sum(status_counts.values())
     connection.close()
 
     return render_template(
@@ -110,6 +128,8 @@ def index():
         status_options=sorted(ALLOWED_STATUSES),
         search_keyword=search_keyword,
         selected_sort=selected_sort,
+        total_applications=total_applications,
+        status_counts=status_counts,
     )
 
 
