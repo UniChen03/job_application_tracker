@@ -55,31 +55,41 @@ def validate_application_form(form):
 def index():
     page_title = "Job Application Tracker"
     selected_status = request.args.get("status", "").strip()
+    search_keyword = request.args.get("search", "").strip()
 
     if selected_status and selected_status not in ALLOWED_STATUSES:
         return "Invalid application status.", 400
 
     connection = get_db_connection()
 
-    if selected_status:
-        applications = connection.execute(
-            """
+    query = """
             SELECT id, company, position, wage, status
             FROM applications
-            WHERE status = ?
-            ORDER BY id DESC
-            """,
-            (selected_status,),
-        ).fetchall()
+    """
+    conditions = []
+    parameters = []
 
-    else:
-        applications = connection.execute(
-            """
-            SELECT id, company, position, wage, status
-            FROM applications
-            ORDER BY id DESC
-            """
-        ).fetchall()
+    if selected_status:
+        conditions.append("status = ?")
+        parameters.append(selected_status)
+
+    if search_keyword:
+        search_pattern = f"%{search_keyword.lower()}%"
+
+        conditions.append(
+            "(LOWER(company) LIKE ? OR LOWER(position) LIKE ?)"
+        )
+        parameters.extend([search_pattern, search_pattern])
+
+    if conditions:
+        query += " WHERE " + " AND ".join(conditions)
+
+    query += " ORDER BY id DESC"
+
+    applications = connection.execute(
+        query,
+        tuple(parameters),
+    ).fetchall()
     connection.close()
 
     return render_template(
@@ -88,6 +98,7 @@ def index():
         applications=applications,
         selected_status=selected_status,
         status_options=sorted(ALLOWED_STATUSES),
+        search_keyword=search_keyword,
     )
 
 

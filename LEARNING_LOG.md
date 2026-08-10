@@ -14,7 +14,8 @@
 - **Flask** uses it to turn an HTML template containing placeholders into finished HTML
 
 ## SQLite
-- 
+- SQL `LIKE` performs partial text matching, and `%` represents any sequence of characters.
+- Dynamic filters can build SQL conditions while keeping user values in separate parameters.
 
 ## JavaScript
 -

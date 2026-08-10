@@ -272,6 +272,87 @@ class ApplicationRouteTests(unittest.TestCase):
             response.get_data(as_text=True),
         )
 
+    def test_index_searches_by_company_or_position(self):
+        connection = sqlite3.connect(self.test_database_path)
+        connection.executemany(
+            """
+            INSERT INTO applications (company, position, wage, status)
+            VALUES (?, ?, ?, ?)
+            """,
+            [
+                ("Python Industries", "Accountant", 25.0, "Applied"),
+                ("Code Company", "Python Developer", 30.0, "Applied"),
+                ("Design Company", "Designer", 35.0, "Applied"),
+            ],
+        )
+        connection.commit()
+        connection.close()
+
+        response = self.client.get("/?search=python")
+
+        self.assertEqual(response.status_code, 200)
+
+        page_html = response.get_data(as_text=True)
+
+        self.assertIn("Python Industries", page_html)
+        self.assertIn("Code Company", page_html)
+        self.assertNotIn("Design Company", page_html)
+
+    def test_index_displays_no_keyword_matches_message(self):
+        connection = sqlite3.connect(self.test_database_path)
+        connection.execute(
+            """
+            INSERT INTO applications (company, position, wage, status)
+            VALUES (?, ?, ?, ?)
+            """,
+            ("test_comp", "test_posi", 25.00, "Applied"),
+        )
+        connection.commit()
+        connection.close()
+
+        response = self.client.get("/?search=invalid_keyword")
+
+        self.assertEqual(response.status_code, 200)
+
+        page_html = response.get_data(as_text=True)
+
+        self.assertIn(
+            "No applications match the keyword \"invalid_keyword\".",
+            page_html,
+        )
+        self.assertNotIn(
+            "No applications yet. Add one using the form above.",
+            page_html,
+        )
+
+    def test_index_combines_status_filter_and_search(self):
+        connection = sqlite3.connect(self.test_database_path)
+        connection.executemany(
+            """
+            INSERT INTO applications (company, position, wage, status)
+            VALUES (?, ?, ?, ?)
+            """,
+            [
+                ("Applied Python Company", "Developer", 25.0, "Applied"),
+                ("Rejected Python Company", "Developer", 30.0, "Rejected"),
+                ("Applied Design Company", "Designer", 35.0, "Applied"),
+            ],
+        )
+        connection.commit()
+        connection.close()
+
+        response = self.client.get(
+            "/?status=Applied&search=python"
+        )
+
+        self.assertEqual(response.status_code, 200)
+
+        page_html = response.get_data(as_text=True)
+
+        self.assertIn("Applied Python Company", page_html)
+        self.assertNotIn("Rejected Python Company", page_html)
+        self.assertNotIn("Applied Design Company", page_html)
+
     def tearDown(self):
         app_module.database_path = self.original_database_path
         app_module.app.config["TESTING"] = self.original_testing

@@ -12,6 +12,7 @@ A learning-focused Flask web application for tracking job applications through d
 - Validate application data on the server
 - Display wages in US dollar format
 - Test validation and CRUD routes with Python unittest
+- Search applications by company or position
 
 ## Technology Stack
 

@@ -75,7 +75,16 @@
                 {% endfor %}
             </select>
 
-            <button type="submit">Filter</button>
+            <label for="search-keyword">Search by company or position</label>
+
+            <input
+                type="text"
+                id="search-keyword"
+                name="search"
+                value="{{ search_keyword }}"
+                maxlength="127"
+            >
+            <button type="submit">Apply</button>
             <a href="{{ url_for('index') }}">Clear</a>
         </form>
 
@@ -247,8 +256,12 @@
                 {% else %}
                     <tr>
                         <td colspan="5">
-                            {% if selected_status %}
+                            {% if selected_status and search_keyword %}
+                                No applications match the {{ selected_status }} status and keyword "{{ search_keyword }}".
+                            {% elif selected_status %}
                                 No applications match the {{ selected_status }} status.
+                            {% elif search_keyword %}
+                                No applications match the keyword "{{ search_keyword }}".
                             {% else %}
                                 No applications yet. Add one using the form above.
                             {% endif %}

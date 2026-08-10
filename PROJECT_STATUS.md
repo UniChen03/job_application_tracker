@@ -5,7 +5,7 @@
 - Created a Python virtual environment.
 - Installed Flask.
 - Created the first Flask application.
-- Added the '/' route.
+- Added the `/` route.
 - Successfully ran the development server.
 - Rendered the home page using a Jinja HTML template.
 - Passed sample application data from Flask to a Jinja loop.
@@ -30,3 +30,4 @@
 - Added Flask route integration tests for CRUD success and error paths using a temporary SQLite database.
 - Added status filtering with GET query parameters, server-side validation, and filtered empty-state messaging.
 - Added project documentation with features, setup, usage, and testing instructions.
+- Added case-insensitive search by company or position and combined it with status filtering.
