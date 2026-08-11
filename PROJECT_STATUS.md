@@ -35,3 +35,5 @@
 - Added a styled application summary with total and per-status counts.
 - Added optional non-future application dates and notes to Create, Read, and Update workflows.
 - Added optional validated job-posting links to Create, Read, and Update workflows.
+- Added responsive form and filter layouts, consistent panels and buttons, and status badges.
+- Added a narrow-screen card layout for applications to avoid horizontal table scrolling.

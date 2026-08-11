@@ -32,6 +32,11 @@
 ## CSS
 - CSS Grid arranges elements into rows and columns.
 - `repeat(auto-fit, minmax(...))` creates responsive columns that adjust to the available width.
+- Flexbox can stack or align related controls inside an individual grid item.
+- A media query changes layout rules when the viewport crosses a chosen width.
+- `box-sizing: border-box` keeps padding and borders inside an element's declared width.
+- CSS media queries can transform table rows into stacked cards on narrow screens.
+- HTML `data-*` attributes can provide labels that CSS reads with `attr(...)`.
 
 ## JavaScript
 -

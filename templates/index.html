@@ -10,78 +10,96 @@
 </head>
 <body>
     <h1>{{ page_title }}</h1>
-    <div>
+    <div class="panel">
         <h2>Add New Application</h2>
 
-        <form action="{{ url_for('add_application') }}" method="post">
-            <label for="company">Company</label>
-            <input
-                type="text"
-                id="company"
-                name="company"
-                maxlength="127"
-                required
-            >
+        <form
+            class="application-form"
+            action="{{ url_for('add_application') }}"
+            method="post"
+        >
+            <div class="form-field">
+                <label for="company">Company</label>
+                <input
+                    type="text"
+                    id="company"
+                    name="company"
+                    maxlength="127"
+                    required
+                >
+            </div>
 
-            <label for="position">Position</label>
-            <input
-                type="text"
-                id="position"
-                name="position"
-                maxlength="63"
-                required
-            >
+            <div class="form-field">
+                <label for="position">Position</label>
+                <input
+                    type="text"
+                    id="position"
+                    name="position"
+                    maxlength="63"
+                    required
+                >
+            </div>
 
-            <label for="wage">Wage</label>
-            <input
-                type="number"
-                id="wage"
-                name="wage"
-                min="0"
-                step="0.01"
-            >
+            <div class="form-field">
+                <label for="wage">Wage</label>
+                <input
+                    type="number"
+                    id="wage"
+                    name="wage"
+                    min="0"
+                    step="0.01"
+                >
+            </div>
 
-            <label for="status">Status</label>
-            <select id="status" name="status" required>
-                <option value="Applied">Applied</option>
-                <option value="Waiting for Interview">Waiting for Interview</option>
-                <option value="Interviewed">Interviewed</option>
-                <option value="Offer">Offer</option>
-                <option value="Rejected">Rejected</option>
-                <option value="Withdrawn">Withdrawn</option>
-                <option value="Other">Other</option>
-            </select>
+            <div class="form-field">
+                <label for="status">Status</label>
+                <select id="status" name="status" required>
+                    <option value="Applied">Applied</option>
+                    <option value="Waiting for Interview">Waiting for Interview</option>
+                    <option value="Interviewed">Interviewed</option>
+                    <option value="Offer">Offer</option>
+                    <option value="Rejected">Rejected</option>
+                    <option value="Withdrawn">Withdrawn</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
 
-            <label for="application-date">Application Date</label>
-            <input
-                type="date"
-                id="application-date"
-                name="application_date"
-                max="{{ today }}"
-            >
+            <div class="form-field">
+                <label for="application-date">Application Date</label>
+                <input
+                    type="date"
+                    id="application-date"
+                    name="application_date"
+                    max="{{ today }}"
+                >
+            </div>
 
-            <label for="job-url">Job Posting URL</label>
-            <input
-                type="url"
-                id="job-url"
-                name="job_url"
-                maxlength="2048"
-                placeholder="https://example.com/job"
-            >
+            <div class="form-field">
+                <label for="job-url">Job Posting URL</label>
+                <input
+                    type="url"
+                    id="job-url"
+                    name="job_url"
+                    maxlength="2048"
+                    placeholder="https://example.com/job"
+                >
+            </div>
 
-            <label for="notes">Notes</label>
-            <textarea
-                id="notes"
-                name="notes"
-                maxlength="2000"
-                rows="4"
-            ></textarea>
+            <div class="form-field form-field-wide">
+                <label for="notes">Notes</label>
+                <textarea
+                    id="notes"
+                    name="notes"
+                    maxlength="2000"
+                    rows="4"
+                ></textarea>
+            </div>
 
             <button type="submit">Add Application</button>
         </form>
     </div>
 
-    <section class="application-summary">
+    <section class="application-summary panel">
         <h2>Application Summary</h2>
 
         <p class="summary-total">
@@ -97,76 +115,87 @@
         </ul>
     </section>
 
-    <div>
+    <div class="panel">
         <h2>Existing Applications</h2>
 
-        <form action="{{ url_for('index') }}" method="get">
-            <label for="status-filter">Filter by status</label>
+        <form
+            class="application-controls"
+            action="{{ url_for('index') }}"
+            method="get"
+        >
+            <div class="form-field">
+                <label for="status-filter">Filter by status</label>
+                <select id="status-filter" name="status">
+                    <option value="">All statuses</option>
 
-            <select id="status-filter" name="status">
-                <option value="">All statuses</option>
+                    {% for status in status_options %}
+                        <option
+                            value="{{ status }}"
+                            {% if status == selected_status %}selected{% endif %}
+                        >
+                            {{ status }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
 
-                {% for status in status_options %}
+            <div class="form-field">
+                <label for="search-keyword">Search by company or position</label>
+                <input
+                    type="text"
+                    id="search-keyword"
+                    name="search"
+                    value="{{ search_keyword }}"
+                    maxlength="127"
+                >
+            </div>
+
+            <div class="form-field">
+                <label for="sort-order">Sort by</label>
+                <select id="sort-order" name="sort">
                     <option
-                        value="{{ status }}"
-                        {% if status == selected_status %}selected{% endif %}
+                        value="newest"
+                        {% if selected_sort == "newest" %}selected{% endif %}
                     >
-                        {{ status }}
+                        Added newest first
                     </option>
-                {% endfor %}
-            </select>
-            <br>
-            <label for="search-keyword">Search by company or position</label>
 
-            <input
-                type="text"
-                id="search-keyword"
-                name="search"
-                value="{{ search_keyword }}"
-                maxlength="127"
-            >
-            <br>
-            <label for="sort-order">Sort by</label>
+                    <option
+                        value="application_date"
+                        {% if selected_sort == "application_date" %}selected{% endif %}
+                    >
+                        Application date newest first
+                    </option>
 
-            <select id="sort-order" name="sort">
-                <option
-                    value="newest"
-                    {% if selected_sort == "newest" %}selected{% endif %}
-                >
-                    Added newest first
-                </option>
+                    <option
+                        value="company"
+                        {% if selected_sort == "company" %}selected{% endif %}
+                    >
+                        Company A–Z
+                    </option>
 
-                <option
-                    value="application_date"
-                    {% if selected_sort == "application_date" %}selected{% endif %}
-                >
-                    Application date newest first
-                </option>
+                    <option
+                        value="position"
+                        {% if selected_sort == "position" %}selected{% endif %}
+                    >
+                        Position A–Z
+                    </option>
 
-                <option
-                    value="company"
-                    {% if selected_sort == "company" %}selected{% endif %}
-                >
-                    Company A–Z
-                </option>
+                    <option
+                        value="wage"
+                        {% if selected_sort == "wage" %}selected{% endif %}
+                    >
+                        Wage highest first
+                    </option>
+                </select>
+            </div>
 
-                <option
-                    value="position"
-                    {% if selected_sort == "position" %}selected{% endif %}
-                >
-                    Position A–Z
-                </option>
-
-                <option
-                    value="wage"
-                    {% if selected_sort == "wage" %}selected{% endif %}
-                >
-                    Wage highest first
-                </option>
-            </select>
-
-            <button type="submit">Apply</button>
-            <a href="{{ url_for('index') }}">Clear</a>
+            <div class="control-actions">
+                <button type="submit">Apply</button>
+                <a class="secondary-link" href="{{ url_for('index') }}">
+                    Clear
+                </a>
+            </div>
         </form>
 
         <table>
@@ -185,7 +214,7 @@
             <tbody>
                 {% for application in applications %}
                     <tr>
-                        <td>
+                        <td data-label="Company">
                             <span class="display-value">
                                 {{ application.company }}
                             </span>
@@ -224,7 +253,7 @@
                             >
                         </td>
 
-                        <td>
+                        <td data-label="Position">
                             <span class="display-value">
                                 {{ application.position }}
                             </span>
@@ -241,7 +270,7 @@
                             >
                         </td>
 
-                        <td>
+                        <td data-label="Wage">
                             <span class="display-value">
                                 {% if application.wage is not none %}
                                     ${{ "%.2f" | format(application.wage) }}
@@ -262,8 +291,8 @@
                             >
                         </td>
 
-                        <td>
-                            <span class="display-value">
+                        <td data-label="Status">
+                            <span class="display-value status-badge">
                                 {{ application.status }}
                             </span>
 
@@ -325,7 +354,7 @@
                             </select>
                         </td>
 
-                        <td>
+                        <td data-label="Application Date">
                             <span class="display-value">
                                 {% if application.application_date %}
                                     {{ application.application_date }}
@@ -345,7 +374,7 @@
                             >
                         </td>
 
-                        <td class="notes-cell">
+                        <td class="notes-cell" data-label="Notes">
                             <span class="display-value application-notes">
                                 {{- application.notes or "Not provided" -}}
                             </span>
@@ -360,7 +389,7 @@
                             >{{ application.notes or '' }}</textarea>
                         </td>
 
-                        <td>
+                        <td data-label="Actions">
                             <a
                                 class="edit-link"
                                 href="{{ url_for('edit_application', application_id=application.id) }}"
@@ -395,7 +424,7 @@
                     </tr>
                 {% else %}
                     <tr>
-                        <td colspan="7">
+                        <td class="empty-state" colspan="7">
                             {% if selected_status and search_keyword %}
                                 No applications match the {{ selected_status }} status and keyword "{{ search_keyword }}".
                             {% elif selected_status %}
