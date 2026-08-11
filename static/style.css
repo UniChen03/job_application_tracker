@@ -54,3 +54,21 @@ dialog::backdrop {
     padding: 0;
     list-style: none;
 }
+
+.notes-cell {
+    min-width: 180px;
+}
+
+.application-notes {
+    white-space: pre-wrap;
+}
+
+.edit-control {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+textarea.edit-control {
+    resize: vertical;
+}

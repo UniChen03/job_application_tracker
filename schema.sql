@@ -14,5 +14,19 @@ CREATE TABLE IF NOT EXISTS applications (
                 'Withdrawn',
                 'Other'
             )
+        ),
+    application_date TEXT
+        CHECK (
+            application_date IS NULL
+            OR (
+                length(application_date) = 10
+                AND application_date GLOB
+                    '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]'
+            )
+        ),
+    notes TEXT
+        CHECK (
+            notes IS NULL
+            OR length(notes) <= 2000
         )
 );

@@ -31,5 +31,6 @@
 - Added status filtering with GET query parameters, server-side validation, and filtered empty-state messaging.
 - Added project documentation with features, setup, usage, and testing instructions.
 - Added case-insensitive search by company or position and combined it with status filtering.
-- Added application sorting by newest, company, position, and highest wage.
+- Added sorting by date added, application date, company, position, and highest wage.
 - Added a styled application summary with total and per-status counts.
+- Added optional non-future application dates and notes to Create, Read, and Update workflows.

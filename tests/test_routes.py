@@ -1,6 +1,7 @@
 import sqlite3
 import tempfile
 import unittest
+from datetime import date
 from pathlib import Path
 
 import app as app_module
@@ -37,6 +38,8 @@ class ApplicationRouteTests(unittest.TestCase):
                 "position": "test_posi",
                 "wage": "25.00",
                 "status": "Applied",
+                "application_date": "2026-08-10",
+                "notes": "Follow up next week.",
             },
         )
 
@@ -45,7 +48,8 @@ class ApplicationRouteTests(unittest.TestCase):
         connection = sqlite3.connect(self.test_database_path)
         application = connection.execute(
             """
-            SELECT company, position, wage, status
+            SELECT company, position, wage, status,
+                application_date, notes
             FROM applications
             """
         ).fetchone()
@@ -53,7 +57,14 @@ class ApplicationRouteTests(unittest.TestCase):
 
         self.assertEqual(
             application,
-            ("test_comp", "test_posi", 25.00, "Applied"),
+            (
+                "test_comp",
+                "test_posi",
+                25.00,
+                "Applied",
+                "2026-08-10",
+                "Follow up next week.",
+            ),
         )
 
     def test_add_application_rejects_invalid_data(self):
@@ -84,10 +95,24 @@ class ApplicationRouteTests(unittest.TestCase):
         connection = sqlite3.connect(self.test_database_path)
         connection.execute(
             """
-            INSERT INTO applications (company, position, wage, status)
-            VALUES (?, ?, ?, ?)
+            INSERT INTO applications (
+                company,
+                position,
+                wage,
+                status,
+                application_date,
+                notes
+            )
+            VALUES (?, ?, ?, ?, ?, ?)
             """,
-            ("test_comp", "test_posi", 30.00, "Applied"),
+            (
+                "test_comp",
+                "test_posi",
+                30.00,
+                "Applied",
+                "2026-08-10",
+                "Follow up next week.",
+            ),
         )
         connection.commit()
         connection.close()
@@ -101,8 +126,12 @@ class ApplicationRouteTests(unittest.TestCase):
         self.assertIn("test_comp", page_html)
         self.assertIn("test_posi", page_html)
         self.assertIn("$30.00", page_html)
+        self.assertIn("2026-08-10", page_html)
+        self.assertIn("Follow up next week.", page_html)
 
     def test_edit_application_updates_existing_data(self):
+        application_date = date.today().isoformat()
+
         connection = sqlite3.connect(self.test_database_path)
         cursor = connection.execute(
             """
@@ -122,6 +151,8 @@ class ApplicationRouteTests(unittest.TestCase):
                 "position": "new_test_posi",
                 "wage": "25.00",
                 "status": "Rejected",
+                "application_date": application_date,
+                "notes": "Interview scheduled.",
             },
         )
 
@@ -130,7 +161,8 @@ class ApplicationRouteTests(unittest.TestCase):
         connection = sqlite3.connect(self.test_database_path)
         application = connection.execute(
             """
-            SELECT company, position, wage, status
+            SELECT company, position, wage, status,
+                   application_date, notes
             FROM applications
             WHERE id = ?
             """,
@@ -140,7 +172,14 @@ class ApplicationRouteTests(unittest.TestCase):
 
         self.assertEqual(
             application,
-            ("new_test_comp", "new_test_posi", 25.00, "Rejected"),
+            (
+                "new_test_comp",
+                "new_test_posi",
+                25.00,
+                "Rejected",
+                application_date,
+                "Interview scheduled.",
+            ),
         )
 
     def test_edit_nonexistent_application_returns_404(self):
@@ -357,12 +396,30 @@ class ApplicationRouteTests(unittest.TestCase):
         connection = sqlite3.connect(self.test_database_path)
         connection.executemany(
             """
-            INSERT INTO applications (company, position, wage, status)
-            VALUES (?, ?, ?, ?)
+            INSERT INTO applications (
+                company,
+                position,
+                wage,
+                status,
+                application_date
+            )
+            VALUES (?, ?, ?, ?, ?)
             """,
             [
-                ("Zulu Company", "Alpha Position", 20.0, "Applied"),
-                ("Alpha Company", "Zulu Position", 40.0, "Applied"),
+                (
+                    "Zulu Company",
+                    "Alpha Position",
+                    20.0,
+                    "Applied",
+                    "2026-08-10",
+                ),
+                (
+                    "Alpha Company",
+                    "Zulu Position",
+                    40.0,
+                    "Applied",
+                    "2026-08-01",
+                ),
             ],
         )
         connection.commit()
@@ -373,6 +430,7 @@ class ApplicationRouteTests(unittest.TestCase):
             ("company", "Alpha Company", "Zulu Company"),
             ("position", "Zulu Company", "Alpha Company"),
             ("wage", "Alpha Company", "Zulu Company"),
+            ("application_date", "Zulu Company", "Alpha Company"),
         ]
 
         for sort_option, first_company, second_company in sort_cases:

@@ -52,6 +52,22 @@
                 <option value="Other">Other</option>
             </select>
 
+            <label for="application-date">Application Date</label>
+            <input
+                type="date"
+                id="application-date"
+                name="application_date"
+                max="{{ today }}"
+            >
+
+            <label for="notes">Notes</label>
+            <textarea
+                id="notes"
+                name="notes"
+                maxlength="2000"
+                rows="4"
+            ></textarea>
+
             <button type="submit">Add Application</button>
         </form>
     </div>
@@ -108,7 +124,14 @@
                     value="newest"
                     {% if selected_sort == "newest" %}selected{% endif %}
                 >
-                    Newest first
+                    Added newest first
+                </option>
+
+                <option
+                    value="application_date"
+                    {% if selected_sort == "application_date" %}selected{% endif %}
+                >
+                    Application date newest first
                 </option>
 
                 <option
@@ -144,6 +167,8 @@
                     <th>Position</th>
                     <th>Wage</th>
                     <th>Status</th>
+                    <th>Application Date</th>
+                    <th>Notes</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -270,6 +295,41 @@
                         </td>
 
                         <td>
+                            <span class="display-value">
+                                {% if application.application_date %}
+                                    {{ application.application_date }}
+                                {% else %}
+                                    Not provided
+                                {% endif %}
+                            </span>
+
+                            <input
+                                class="edit-control"
+                                type="date"
+                                name="application_date"
+                                value="{{ application.application_date or '' }}"
+                                max="{{ today }}"
+                                form="edit-form-{{ application.id }}"
+                                hidden
+                            >
+                        </td>
+
+                        <td class="notes-cell">
+                            <span class="display-value application-notes">
+                                {{- application.notes or "Not provided" -}}
+                            </span>
+
+                            <textarea
+                                class="edit-control"
+                                name="notes"
+                                maxlength="2000"
+                                rows="4"
+                                form="edit-form-{{ application.id }}"
+                                hidden
+                            >{{ application.notes or '' }}</textarea>
+                        </td>
+
+                        <td>
                             <a
                                 class="edit-link"
                                 href="{{ url_for('edit_application', application_id=application.id) }}"
@@ -304,7 +364,7 @@
                     </tr>
                 {% else %}
                     <tr>
-                        <td colspan="5">
+                        <td colspan="7">
                             {% if selected_status and search_keyword %}
                                 No applications match the {{ selected_status }} status and keyword "{{ search_keyword }}".
                             {% elif selected_status %}

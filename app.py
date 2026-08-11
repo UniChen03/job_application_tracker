@@ -1,4 +1,5 @@
 import sqlite3
+from datetime import date
 from pathlib import Path
 
 from flask import Flask, redirect, render_template, request, url_for
@@ -16,6 +17,10 @@ ALLOWED_STATUSES = {
 }
 SORT_OPTIONS = {
     "newest": "id DESC",
+    "application_date": (
+        "application_date IS NULL ASC, "
+        "application_date DESC, id DESC"
+    ),
     "company": "company COLLATE NOCASE ASC",
     "position": "position COLLATE NOCASE ASC",
     "wage": "wage DESC",
@@ -33,6 +38,8 @@ def validate_application_form(form):
     position = form.get("position", "").strip()
     wage_text = form.get("wage", "").strip()
     status = form.get("status", "").strip()
+    application_date = form.get("application_date", "").strip()
+    notes = form.get("notes", "").strip()
 
     if not company or not position or not status:
         return None, "Company, position, and status are required."
@@ -54,7 +61,33 @@ def validate_application_form(form):
     if wage is not None and wage < 0:
         return None, "Wage cannot be negative."
 
-    return (company, position, wage, status), None
+    if application_date:
+        try:
+            parsed_application_date = date.fromisoformat(application_date)
+        except ValueError:
+            return None, "Application date must be a valid date."
+
+        if parsed_application_date > date.today():
+            return None, "Application date cannot be in the future."
+
+        application_date = parsed_application_date.isoformat()
+
+    if len(notes) > 2000:
+        return None, "Notes must be 2000 characters or fewer."
+
+    application_date = application_date or None
+    notes = notes or None
+
+    form_data = (
+        company,
+        position,
+        wage,
+        status,
+        application_date,
+        notes,
+    )
+
+    return form_data, None
 
 
 @app.route("/")
@@ -73,7 +106,8 @@ def index():
     connection = get_db_connection()
 
     query = """
-            SELECT id, company, position, wage, status
+            SELECT id, company, position, wage, status,
+                   application_date, notes
             FROM applications
     """
     conditions = []
@@ -130,6 +164,7 @@ def index():
         selected_sort=selected_sort,
         total_applications=total_applications,
         status_counts=status_counts,
+        today=date.today().isoformat(),
     )
 
 
@@ -140,15 +175,29 @@ def add_application():
     if err_msg is not None:
         return err_msg, 400
 
-    company, position, wage, status = form_data
+    company, position, wage, status, application_date, notes = form_data
 
     connection = get_db_connection()
     connection.execute(
         """
-        INSERT INTO applications (company, position, wage, status)
-        VALUES (?, ?, ?, ?)
+        INSERT INTO applications (
+            company,
+            position,
+            wage,
+            status,
+            application_date,
+            notes
+        )
+        VALUES (?, ?, ?, ?, ?, ?)
         """,
-        (company, position, wage, status),
+        (
+            company,
+            position,
+            wage,
+            status,
+            application_date,
+            notes,
+        ),
     )
     connection.commit()
     connection.close()
@@ -199,7 +248,8 @@ def edit_application(application_id):
 
     application = connection.execute(
         """
-        SELECT id, company, position, wage, status
+        SELECT id, company, position, wage, status,
+               application_date, notes
         FROM applications
         WHERE id = ?
         """,
@@ -216,16 +266,29 @@ def edit_application(application_id):
         if err_msg is not None:
             return err_msg, 400
 
-        company, position, wage, status = form_data
+        company, position, wage, status, application_date, notes = form_data
 
         connection = get_db_connection()
         connection.execute(
             """
             UPDATE applications
-            SET company = ?, position = ?, wage = ?, status = ?
+            SET company = ?,
+                position = ?,
+                wage = ?,
+                status = ?,
+                application_date = ?,
+                notes = ?
             WHERE id = ?
             """,
-            (company, position, wage, status, application_id),
+            (
+                company,
+                position,
+                wage,
+                status,
+                application_date,
+                notes,
+                application_id,
+            ),
         )
         connection.commit()
         connection.close()
@@ -235,4 +298,5 @@ def edit_application(application_id):
     return render_template(
         "edit.html",
         application=application,
+        today=date.today().isoformat(),
     )

@@ -88,7 +88,31 @@
             >
                 Withdrawn
             </option>
+
+            <option
+                value="Other"
+                {% if application.status == "Other" %}selected{% endif %}
+            >
+                Other
+            </option>
         </select>
+
+        <label for="application-date">Application Date</label>
+        <input
+            type="date"
+            id="application-date"
+            name="application_date"
+            value="{{ application.application_date or '' }}"
+            max="{{ today }}"
+        >
+
+        <label for="notes">Notes</label>
+        <textarea
+            id="notes"
+            name="notes"
+            maxlength="2000"
+            rows="6"
+        >{{ application.notes or '' }}</textarea>
 
         <button type="submit">Save Changes</button>
     </form>

@@ -13,6 +13,11 @@
 - Template engine for Python
 - **Flask** uses it to turn an HTML template containing placeholders into finished HTML
 
+## Python
+- `date.fromisoformat()` validates ISO date strings and rejects impossible calendar dates.
+- `date.today()` allows validation rules to compare submitted dates with the current local date.
+- Empty optional form values can be normalized to `None` so sqlite3 stores SQL `NULL`.
+
 ## SQLite
 - SQL `LIKE` performs partial text matching, and `%` represents any sequence of characters.
 - Dynamic filters can build SQL conditions while keeping user values in separate parameters.
@@ -20,6 +25,8 @@
 - SQL placeholders protect data values, but they cannot replace SQL keywords or column names.
 - A whitelist can safely map user-selected options to trusted SQL sorting clauses.
 - SQL `COUNT(*)` counts rows, and `GROUP BY` creates groups that can be counted separately.
+- ISO dates stored as `YYYY-MM-DD` text remain sortable in chronological order.
+- `CHECK` constraints provide database-level limits in addition to Python validation.
 
 ## CSS
 - CSS Grid arranges elements into rows and columns.

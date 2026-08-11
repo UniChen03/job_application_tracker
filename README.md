@@ -13,8 +13,9 @@ A learning-focused Flask web application for tracking job applications through d
 - Display wages in US dollar format
 - Test validation and CRUD routes with Python unittest
 - Search applications by company or position
-- Sort applications by newest, company, position, or wage
+- Sort applications by date added, application date, company, position, or wage
 - View total and status-based application counts
+- Track an optional application date and notes
 
 ## Technology Stack
 

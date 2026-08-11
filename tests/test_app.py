@@ -1,4 +1,5 @@
 import unittest
+from datetime import date, timedelta
 
 from app import validate_application_form
 
@@ -25,6 +26,62 @@ class ValidateApplicationFormTests(unittest.TestCase):
                     err_msg,
                     "Company, position, and status are required.",
                 )
+
+    def test_invalid_application_date_is_rejected(self):
+        form_data, err_msg = validate_application_form(
+            {
+                "company": "test_comp",
+                "position": "test_posi",
+                "wage": "25",
+                "status": "Applied",
+                "application_date": "2026-02-30",
+                "notes": "",
+            }
+        )
+
+        self.assertIsNone(form_data)
+        self.assertEqual(
+            err_msg,
+            "Application date must be a valid date.",
+        )
+
+    def test_future_application_date_is_rejected(self):
+        future_date = (date.today() + timedelta(days=1)).isoformat()
+
+        form_data, err_msg = validate_application_form(
+            {
+                "company": "test_comp",
+                "position": "test_posi",
+                "wage": "25",
+                "status": "Applied",
+                "application_date": future_date,
+                "notes": "",
+            }
+        )
+
+        self.assertIsNone(form_data)
+        self.assertEqual(
+            err_msg,
+            "Application date cannot be in the future.",
+        )
+
+    def test_too_long_notes_are_rejected(self):
+        form_data, err_msg = validate_application_form(
+            {
+                "company": "test_comp",
+                "position": "test_posi",
+                "wage": "25",
+                "status": "Applied",
+                "application_date": "2026-08-10",
+                "notes": "N" * 2001,
+            }
+        )
+
+        self.assertIsNone(form_data)
+        self.assertEqual(
+            err_msg,
+            "Notes must be 2000 characters or fewer.",
+        )
 
     def test_negative_wage_is_rejected(self):
         form_data, err_msg = validate_application_form(
@@ -113,12 +170,21 @@ class ValidateApplicationFormTests(unittest.TestCase):
                 "position": "test_posi",
                 "wage": "25",
                 "status": "Applied",
+                "application_date": "2026-08-10",
+                "notes": "  Follow up next week.  ",
             }
         )
 
         self.assertEqual(
             form_data,
-            ("test_comp", "test_posi", 25.0, "Applied"),
+            (
+                "test_comp",
+                "test_posi",
+                25.0,
+                "Applied",
+                "2026-08-10",
+                "Follow up next week.",
+            ),
         )
         self.assertIsNone(err_msg)
 
@@ -129,12 +195,21 @@ class ValidateApplicationFormTests(unittest.TestCase):
                 "position": "test_posi",
                 "wage": "",
                 "status": "Applied",
+                "application_date": "",
+                "notes": "",
             }
         )
 
         self.assertEqual(
             form_data,
-            ("test_comp", "test_posi", None, "Applied"),
+            (
+                "test_comp",
+                "test_posi",
+                None,
+                "Applied",
+                None,
+                None,
+            ),
         )
         self.assertIsNone(err_msg)
 
