@@ -40,6 +40,7 @@ class ApplicationRouteTests(unittest.TestCase):
                 "status": "Applied",
                 "application_date": "2026-08-10",
                 "notes": "Follow up next week.",
+                "job_url": "https://example.com/job",
             },
         )
 
@@ -49,7 +50,7 @@ class ApplicationRouteTests(unittest.TestCase):
         application = connection.execute(
             """
             SELECT company, position, wage, status,
-                application_date, notes
+                application_date, notes, job_url
             FROM applications
             """
         ).fetchone()
@@ -64,6 +65,7 @@ class ApplicationRouteTests(unittest.TestCase):
                 "Applied",
                 "2026-08-10",
                 "Follow up next week.",
+                "https://example.com/job",
             ),
         )
 
@@ -101,9 +103,10 @@ class ApplicationRouteTests(unittest.TestCase):
                 wage,
                 status,
                 application_date,
-                notes
+                notes,
+                job_url
             )
-            VALUES (?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 "test_comp",
@@ -112,6 +115,7 @@ class ApplicationRouteTests(unittest.TestCase):
                 "Applied",
                 "2026-08-10",
                 "Follow up next week.",
+                "https://example.com/job",
             ),
         )
         connection.commit()
@@ -128,6 +132,9 @@ class ApplicationRouteTests(unittest.TestCase):
         self.assertIn("$30.00", page_html)
         self.assertIn("2026-08-10", page_html)
         self.assertIn("Follow up next week.", page_html)
+        self.assertIn('href="https://example.com/job"', page_html)
+        self.assertIn('rel="noopener noreferrer"', page_html)
+        self.assertIn("Open Posting", page_html)
 
     def test_edit_application_updates_existing_data(self):
         application_date = date.today().isoformat()
@@ -153,6 +160,7 @@ class ApplicationRouteTests(unittest.TestCase):
                 "status": "Rejected",
                 "application_date": application_date,
                 "notes": "Interview scheduled.",
+                "job_url": "https://example.com/new-job",
             },
         )
 
@@ -162,7 +170,7 @@ class ApplicationRouteTests(unittest.TestCase):
         application = connection.execute(
             """
             SELECT company, position, wage, status,
-                   application_date, notes
+                   application_date, notes, job_url
             FROM applications
             WHERE id = ?
             """,
@@ -179,6 +187,7 @@ class ApplicationRouteTests(unittest.TestCase):
                 "Rejected",
                 application_date,
                 "Interview scheduled.",
+                "https://example.com/new-job",
             ),
         )
 

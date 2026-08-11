@@ -16,6 +16,7 @@ A learning-focused Flask web application for tracking job applications through d
 - Sort applications by date added, application date, company, position, or wage
 - View total and status-based application counts
 - Track an optional application date and notes
+- Save an optional link to the original job posting
 
 ## Technology Stack
 

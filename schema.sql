@@ -28,5 +28,10 @@ CREATE TABLE IF NOT EXISTS applications (
         CHECK (
             notes IS NULL
             OR length(notes) <= 2000
+        ),
+    job_url TEXT
+        CHECK (
+            job_url IS NULL
+            OR length(job_url) <= 2048
         )
 );

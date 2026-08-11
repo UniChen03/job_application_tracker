@@ -60,6 +60,15 @@
                 max="{{ today }}"
             >
 
+            <label for="job-url">Job Posting URL</label>
+            <input
+                type="url"
+                id="job-url"
+                name="job_url"
+                maxlength="2048"
+                placeholder="https://example.com/job"
+            >
+
             <label for="notes">Notes</label>
             <textarea
                 id="notes"
@@ -181,6 +190,17 @@
                                 {{ application.company }}
                             </span>
 
+                            {% if application.job_url %}
+                                <a
+                                    class="display-value job-link"
+                                    href="{{ application.job_url }}"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
+                                    Open Posting
+                                </a>
+                            {% endif %}
+
                             <input
                                 class="edit-control"
                                 type="text"
@@ -190,6 +210,17 @@
                                 form="edit-form-{{ application.id }}"
                                 hidden
                                 required
+                            >
+
+                            <input
+                                class="edit-control"
+                                type="url"
+                                name="job_url"
+                                value="{{ application.job_url or '' }}"
+                                maxlength="2048"
+                                placeholder="https://example.com/job"
+                                form="edit-form-{{ application.id }}"
+                                hidden
                             >
                         </td>
 

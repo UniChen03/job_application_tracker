@@ -83,6 +83,52 @@ class ValidateApplicationFormTests(unittest.TestCase):
             "Notes must be 2000 characters or fewer.",
         )
 
+    def test_invalid_job_urls_are_rejected(self):
+        invalid_job_urls = [
+            "example.com/job",
+            "ftp://example.com/job",
+            "https://",
+        ]
+
+        for job_url in invalid_job_urls:
+            with self.subTest(job_url=job_url):
+                form_data, err_msg = validate_application_form(
+                    {
+                        "company": "test_comp",
+                        "position": "test_posi",
+                        "wage": "25",
+                        "status": "Applied",
+                        "application_date": "",
+                        "notes": "",
+                        "job_url": job_url,
+                    }
+                )
+
+                self.assertIsNone(form_data)
+                self.assertEqual(
+                    err_msg,
+                    "Job posting URL must be a valid HTTP or HTTPS URL.",
+                )
+
+    def test_too_long_job_url_is_rejected(self):
+        form_data, err_msg = validate_application_form(
+            {
+                "company": "test_comp",
+                "position": "test_posi",
+                "wage": "25",
+                "status": "Applied",
+                "application_date": "",
+                "notes": "",
+                "job_url": "https://example.com/" + "j" * 2030,
+            }
+        )
+
+        self.assertIsNone(form_data)
+        self.assertEqual(
+            err_msg,
+            "Job posting URL must be 2048 characters or fewer.",
+        )
+
     def test_negative_wage_is_rejected(self):
         form_data, err_msg = validate_application_form(
             {
@@ -172,6 +218,7 @@ class ValidateApplicationFormTests(unittest.TestCase):
                 "status": "Applied",
                 "application_date": "2026-08-10",
                 "notes": "  Follow up next week.  ",
+                "job_url": "https://example.com/job",
             }
         )
 
@@ -184,6 +231,7 @@ class ValidateApplicationFormTests(unittest.TestCase):
                 "Applied",
                 "2026-08-10",
                 "Follow up next week.",
+                "https://example.com/job",
             ),
         )
         self.assertIsNone(err_msg)
@@ -197,6 +245,7 @@ class ValidateApplicationFormTests(unittest.TestCase):
                 "status": "Applied",
                 "application_date": "",
                 "notes": "",
+                "job_url": "",
             }
         )
 
@@ -207,6 +256,7 @@ class ValidateApplicationFormTests(unittest.TestCase):
                 "test_posi",
                 None,
                 "Applied",
+                None,
                 None,
                 None,
             ),

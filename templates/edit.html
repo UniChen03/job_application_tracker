@@ -106,6 +106,16 @@
             max="{{ today }}"
         >
 
+        <label for="job-url">Job Posting URL</label>
+        <input
+            type="url"
+            id="job-url"
+            name="job_url"
+            value="{{ application.job_url or '' }}"
+            maxlength="2048"
+            placeholder="https://example.com/job"
+        >
+
         <label for="notes">Notes</label>
         <textarea
             id="notes"

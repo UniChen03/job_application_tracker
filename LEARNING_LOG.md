@@ -16,6 +16,7 @@
 ## Python
 - `date.fromisoformat()` validates ISO date strings and rejects impossible calendar dates.
 - `date.today()` allows validation rules to compare submitted dates with the current local date.
+- `urllib.parse.urlparse()` separates a URL into parts so its scheme and hostname can be validated.
 - Empty optional form values can be normalized to `None` so sqlite3 stores SQL `NULL`.
 
 ## SQLite

@@ -1,6 +1,7 @@
 import sqlite3
 from datetime import date
 from pathlib import Path
+from urllib.parse import urlparse
 
 from flask import Flask, redirect, render_template, request, url_for
 
@@ -40,6 +41,7 @@ def validate_application_form(form):
     status = form.get("status", "").strip()
     application_date = form.get("application_date", "").strip()
     notes = form.get("notes", "").strip()
+    job_url = form.get("job_url", "").strip()
 
     if not company or not position or not status:
         return None, "Company, position, and status are required."
@@ -75,8 +77,21 @@ def validate_application_form(form):
     if len(notes) > 2000:
         return None, "Notes must be 2000 characters or fewer."
 
+    if len(job_url) > 2048:
+        return None, "Job posting URL must be 2048 characters or fewer."
+
+    if job_url:
+        parsed_job_url = urlparse(job_url)
+
+        if (
+            parsed_job_url.scheme not in {"http", "https"}
+            or not parsed_job_url.netloc
+        ):
+            return None, "Job posting URL must be a valid HTTP or HTTPS URL."
+
     application_date = application_date or None
     notes = notes or None
+    job_url = job_url or None
 
     form_data = (
         company,
@@ -85,6 +100,7 @@ def validate_application_form(form):
         status,
         application_date,
         notes,
+        job_url,
     )
 
     return form_data, None
@@ -107,7 +123,7 @@ def index():
 
     query = """
             SELECT id, company, position, wage, status,
-                   application_date, notes
+                   application_date, notes, job_url
             FROM applications
     """
     conditions = []
@@ -175,7 +191,15 @@ def add_application():
     if err_msg is not None:
         return err_msg, 400
 
-    company, position, wage, status, application_date, notes = form_data
+    (
+        company,
+        position,
+        wage,
+        status,
+        application_date,
+        notes,
+        job_url,
+    ) = form_data
 
     connection = get_db_connection()
     connection.execute(
@@ -186,9 +210,10 @@ def add_application():
             wage,
             status,
             application_date,
-            notes
+            notes,
+            job_url
         )
-        VALUES (?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
         """,
         (
             company,
@@ -197,6 +222,7 @@ def add_application():
             status,
             application_date,
             notes,
+            job_url,
         ),
     )
     connection.commit()
@@ -249,7 +275,7 @@ def edit_application(application_id):
     application = connection.execute(
         """
         SELECT id, company, position, wage, status,
-               application_date, notes
+               application_date, notes, job_url
         FROM applications
         WHERE id = ?
         """,
@@ -266,7 +292,15 @@ def edit_application(application_id):
         if err_msg is not None:
             return err_msg, 400
 
-        company, position, wage, status, application_date, notes = form_data
+        (
+            company,
+            position,
+            wage,
+            status,
+            application_date,
+            notes,
+            job_url,
+        ) = form_data
 
         connection = get_db_connection()
         connection.execute(
@@ -277,7 +311,8 @@ def edit_application(application_id):
                 wage = ?,
                 status = ?,
                 application_date = ?,
-                notes = ?
+                notes = ?,
+                job_url = ?
             WHERE id = ?
             """,
             (
@@ -287,6 +322,7 @@ def edit_application(application_id):
                 status,
                 application_date,
                 notes,
+                job_url,
                 application_id,
             ),
         )
