@@ -1,0 +1,12 @@
+services:
+  app:
+    build: .
+    container_name: job-application-tracker
+    restart: unless-stopped
+    ports:
+      - "5000:8000"
+    volumes:
+      - job_tracker_data:/app/instance
+
+volumes:
+  job_tracker_data:
