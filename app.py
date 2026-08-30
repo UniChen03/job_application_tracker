@@ -3,6 +3,8 @@ from datetime import date
 from pathlib import Path
 from urllib.parse import urlparse
 
+from werkzeug.middleware.dispatcher import DispatcherMiddleware
+
 from flask import Flask, redirect, render_template, request, url_for
 
 app = Flask(__name__)
@@ -336,3 +338,10 @@ def edit_application(application_id):
         application=application,
         today=date.today().isoformat(),
     )
+
+application = DispatcherMiddleware(
+    Flask("root"),
+    {
+        "/job-application-tracker": app,
+    },
+)
